@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block header %}Users{% endblock %}
+{% block content %}
+<table class="table table-striped" data-bs-theme="dark">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Username</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u['id_user'] }}</td>
+            <td>{{ u['username'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

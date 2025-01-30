@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block header %}Register{% endblock %}
+{% block content %}
+<form method="POST" action="{{ url_for('register') }}" data-bs-theme="dark">
+    <div class="mb-3">
+      <label for="inputUsername" class="form-label">Username</label>
+      <input type="text" class="form-control" id="inputUsername" aria-describedby="emailHelp" name="username" required>
+    </div>
+    <div class="mb-3">
+      <label for="inputPassword" class="form-label">Password</label>
+      <input type="password" class="form-control" id="inputPassword" name="password" required>
+    </div>
+    <div class="mb-3">
+      <label for="inputPasswordRepeat" class="form-label">Repeat Password</label>
+      <input type="password" class="form-control" id="inputPasswordRepeat" name="password_repeat" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+{% endblock %}

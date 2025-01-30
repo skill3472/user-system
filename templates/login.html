@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block header %}Log in{% endblock %}
+{% block content %}
+<form method="POST" action="{{ url_for('login') }}" data-bs-theme="dark">
+    <div class="mb-3">
+      <label for="inputUsername" class="form-label">Username</label>
+      <input type="text" class="form-control" id="inputUsername" aria-describedby="emailHelp" name="username" required>
+    </div>
+    <div class="mb-3">
+      <label for="inputPassword" class="form-label">Password</label>
+      <input type="password" class="form-control" id="inputPassword" name="password" required>
+    </div>
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" id="inputCheckPersistLogin" name="rememberMe">
+      <label class="form-check-label" for="inputCheckPersistLogin">Don't log me out</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+{% endblock %}
