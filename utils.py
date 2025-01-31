@@ -19,10 +19,8 @@ def AddUser(username: str, password: str):
 
         cursor.execute("CALL AddUser(%s, %s);", (username, password))
         conn.commit()
-
     except Exception as e:
         print(f"Error occurred: {e}")
-
     finally:
         cursor.close()
         conn.close()
@@ -59,3 +57,30 @@ def GetUserID(username: str):
             cursor.close()
         if conn:
             conn.close()
+
+def GetUserData(userID: int):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        args = (userID, None, None, None)
+        result = cursor.callproc("GetUserData", args)
+        return result
+    except Exception as e:
+        print(f"Error occurred: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+def GetGender(genderID: int) -> str:
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT gender FROM gender WHERE id_gender = %s", (genderID, ))
+        result = cursor.fetchone()
+        print(result)
+        return result[0]
+    except Exception as e:
+        print(f"Error occurred: {e}")
+    finally:
+        cursor.close()
+        conn.close()

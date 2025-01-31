@@ -36,7 +36,7 @@ def register():
         password = request.form.get('password')
         password_repeat = request.form.get('password_repeat')
         if password != password_repeat:
-            flash('The passwords you entered don\'t match!', 'error')
+            flash('The passwords you entered don\'t match!', 'danger')
             return redirect(url_for('register'))
         salt = bc.gensalt()
         hashed_pw = bc.hashpw(password.encode('utf-8'), salt)
@@ -55,14 +55,13 @@ def login():
         password = request.form.get('password')
         persistSession = request.form.get('rememberMe')
         session.permanent = persistSession
-        print(f'DEBUG: Request data is\n{request.form}')
         success = utils.CheckUser(username, password)
         if success:
             session['user'] = utils.GetUserID(username)
             flash('Logged in successfuly!', 'info')
             return redirect(url_for('index'))
         else:
-            flash('The login and/or password you entered are incorrect.', 'error')
+            flash('The login and/or password you entered are incorrect.', 'danger')
             return redirect(url_for('login'))
     else:
         return render_template('login.html')
@@ -74,15 +73,20 @@ def logout():
         flash('You have been logged out.', 'info')
         return redirect(url_for('index'))
     else:
-        flash('You\'re not logged in, you can\'t log out!', 'error')
+        flash('You\'re not logged in, you can\'t log out!', 'danger')
         return redirect(url_for('index'))
 
 @app.route("/profile")
 def profile():
     if 'user' not in session:
-        flash('You need to be logged in to view this page!', 'error')
+        flash('You need to be logged in to view this page!', 'danger')
         return redirect(url_for('login'))
-    return render_template('profile.html')
+    result = utils.GetUserData(session['user'])
+    userData = {
+        "gender": utils.GetGender(result[3]),
+        "desc": result[2]
+    }
+    return render_template('profile.html', userData=userData)
 
 
 if __name__ == '__main__':

@@ -2,4 +2,12 @@
 {% block header %}Log in{% endblock %}
 {% block content %}
 <p>Hello! Your userID: {{ session['user'] }}</p>
+<ul>
+    {% if userData['gender'] %}
+    <li><b>Gender:</b> {{ userData['gender'] }}</li>
+    {% endif %}
+    {% if userData['desc'] %}
+    <li><b>Description:</b> {{ userData['desc'] }}</li>
+    {% endif %}
+</ul>
 {% endblock %}
