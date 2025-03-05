@@ -1,6 +1,8 @@
 import mysql.connector
 import os
 import bcrypt as bc
+import pyotp
+import dis
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -40,6 +42,8 @@ def CheckUser(username: str, passwordHash: str) -> bool:
         return False
 
 def GetUserID(username: str):
+    cursor = None
+    conn = None
     try:
         print(f'Username: {username}')
         conn = get_db_connection()
@@ -79,6 +83,53 @@ def GetGender(genderID: int) -> str:
         result = cursor.fetchone()
         print(result)
         return result[0]
+    except Exception as e:
+        print(f"Error occurred: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+def Create2FA(uid: str) -> str:
+    secretToken = pyotp.random_base32()
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        print(f'Adding secret {secretToken} for UID {uid}')
+
+        cursor.execute("INSERT INTO mfa_token(id_user, token) VALUES (%s, %s);", (uid, secretToken))
+        conn.commit()
+        return pyotp.totp.TOTP(secretToken).provisioning_uri(name=username, issuer_name='User system')
+    except Exception as e:
+        print(f"Error occurred: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+def CheckIf2FAEnabled(uid: str) -> bool:
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT 1 FROM mfa_token WHERE id_user=%s;", (uid, ))
+        found = len(cursor.fetchall()) > 0
+        conn.commit()
+        return found
+    except Exception as e:
+        print(f"Error occurred: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+def Verify2FA(uid: str, code: int) -> bool:
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT token FROM mfa_token WHERE id_user=%s;", (uid, ))
+        token = cursor.fetchone()['token']
+        totp = pyotp.TOTP(token)
+        conn.commit()
+        return totp.verify(code)
     except Exception as e:
         print(f"Error occurred: {e}")
     finally:

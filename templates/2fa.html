@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block header %}Set up 2FA{% endblock %}
+{% block content %}
+{% if 'user' in session %}
+    {% if data['mfaEnabled'] %}
+    <p>You already have 2FA! Would you like to disable it?</p>
+    <button class="btn btn-primary" disabled>Disable</button>
+    {% else %}
+    <p>TBI: Set up 2fa here.</p>
+    {% endif %}
+{% endif %}
+{% endblock %}

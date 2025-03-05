@@ -88,6 +88,26 @@ def profile():
     }
     return render_template('profile.html', userData=userData)
 
+@app.route("/profile/edit", methods=['GET', 'POST'])
+def editProfile():
+    if request.method == 'GET':
+        if 'user' not in session:
+            flash('You need to be logged in to view this page!', 'danger')
+            return redirect(url_for('login'))
+        result = utils.GetUserData(session['user'])
+        userData = {
+            "gender": utils.GetGender(result[3]),
+            "desc": result[2]
+        }
+        return render_template('edit_profile.html', userData=userData)
+    else:
+        return 404, 'Not implemented yet'
+
+@app.route("/2fa")
+def multifactorAuth():
+    data = dict()
+    data['mfaEnabled'] = utils.CheckIf2FAEnabled(session['user'])
+    return render_template('2fa.html', data=data)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='192.168.1.34')
+    app.run(debug=True, host='192.168.1.34', ssl_context=('/home/skill/certs/local.crt', '/home/skill/certs/local.key'), port=5000)
